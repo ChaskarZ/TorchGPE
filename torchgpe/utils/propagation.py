@@ -77,7 +77,7 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
         callback.on_propagation_begin()
 
     # Precompute kinetic propagator and the total static linear potential
-    kinetic = 0.5 * sum(momentum**2 for momentum in gas.momenta)
+    kinetic = 0.5 * sum(momentum**2 for momentum in gas.momenta) 
     kinetic_propagator = torch.exp(-(0.5j+gamma/2) * kinetic * time_step) #> including dissipation coefficient
     total_static_linear_potential = sum(potential.get_potential(*gas.coordinates) for potential in static_linear_potentials)
     for momenta in gas.momenta:      #> #Just to see stuff
@@ -116,14 +116,14 @@ def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentia
         time_step (float): The time step to use.
         time (float, optional): The in-simulation time . Defaults to None.
     """
-    print("Before", torch.sqrt(torch.sum(torch.abs(gas.psi-gas.psi)**2)*gas.dx*gas.dy).cpu())
+    print("Before", gas.psi[127,127])
     
     gas.psik *= kinetic_propagator
     gas.psi *= potential_propagator(gas, time_step, total_static_linear_potential,
                                     dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, time,gamma) #> 
     gas.psik *= kinetic_propagator
     
-    print("After", torch.sqrt(torch.sum(torch.abs(gas.psi-gas.psi)**2)*gas.dx*gas.dy).cpu())
+    print("After", gas.psi[127,127])
 
     
 
