@@ -75,7 +75,10 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
     kinetic = 0.5 * sum(momentum**2 for momentum in gas.momenta)
     kinetic_propagator = torch.exp(-0.5j * kinetic * time_step)
     total_static_linear_potential = sum(potential.get_potential(*gas.coordinates) for potential in static_linear_potentials)
-
+    for momenta in gas.momenta:
+        print(momenta)
+        break
+    print(kinetic_propagator)
     # Create a progress bar to monitor the evolution
     pbar = tqdm(times, smoothing=0, desc="Propagation",
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]', leave=leave_progress_bar)
