@@ -119,7 +119,7 @@ def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentia
     
    
     
-    print("Before", torch.linalg.matrix_norm(bec.psi))
+    print("Before", torch.linalg.matrix_norm(gas.psi))
     
     gas.psik *= kinetic_propagator
     gas.psi *= potential_propagator(gas, time_step, total_static_linear_potential,
@@ -130,7 +130,7 @@ def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentia
     for el1 in bec.psi:
           for el2 in el1:
                 sum += np.abs(el2.cpu())**2    
-    print("After", torch.linalg.matrix_norm(bec.psi))
+    print("After", torch.linalg.matrix_norm(gas.psi))
 
     
 
