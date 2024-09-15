@@ -119,14 +119,14 @@ def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentia
     
    
     
-    print("Before", torch.linalg.matrix_norm(gas.psi))
+    # print("Before", torch.linalg.matrix_norm(gas.psi)) #>
     
     gas.psik *= kinetic_propagator
     gas.psi *= potential_propagator(gas, time_step, total_static_linear_potential,
                                     dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, time,gamma) #> 
     gas.psik *= kinetic_propagator
     
-    print("After", torch.linalg.matrix_norm(gas.psi))
+    # print("After", torch.linalg.matrix_norm(gas.psi)) #>
 
     
 
