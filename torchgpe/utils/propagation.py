@@ -60,7 +60,7 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
         >dissipation (bool, optional): Whether dissipation should also be considered
         >gamma (float, optional): What kind of dissipation coefficient should be used
     """
-    if (dissipation = False):        #>
+    if (dissipation == False):        #>
         gamma = 0                    #>
     
     # Divide the potentials in linear and nonlinear, time dependent and time independent to precompute the static linear ones
