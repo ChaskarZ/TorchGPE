@@ -116,14 +116,21 @@ def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentia
         time_step (float): The time step to use.
         time (float, optional): The in-simulation time . Defaults to None.
     """
-    print("Before", gas.psi[127,127])
+    
+   
+    
+    print("Before", torch.linalg.matrix_norm(bec.psi))
     
     gas.psik *= kinetic_propagator
     gas.psi *= potential_propagator(gas, time_step, total_static_linear_potential,
                                     dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, time,gamma) #> 
     gas.psik *= kinetic_propagator
     
-    print("After", gas.psi[127,127])
+    sum=0
+    for el1 in bec.psi:
+          for el2 in el1:
+                sum += np.abs(el2.cpu())**2    
+    print("After", torch.linalg.matrix_norm(bec.psi))
 
     
 
