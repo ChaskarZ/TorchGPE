@@ -186,7 +186,7 @@ class Gas():
         imaginary_time_propagation(
             self, potentials, adim_time_step, N_iterations, callbacks, leave_progress_bar)
 
-    def propagate(self, final_time: float, time_step: float = 1e-6, potentials: List[Potential] = [], callbacks: List[Callback] = [], leave_progress_bar=True,dissipation=True, gamma = 0.028521): #>
+    def propagate(self, final_time: float, time_step: float = 1e-6, potentials: List[Potential] = [], callbacks: List[Callback] = [], leave_progress_bar=True,dissipation=True, gamma = 0.028521, rotation = False, omega = 0): #>
         """Propagate the wave function in real time.
 
         Use the split-step Fourier method with real time propagation (RTP) to propagate the gas wave function to :py:attr:`final_time`. 
@@ -254,7 +254,7 @@ class Gas():
             callback.set_propagation_params(propagation_parameters)
 
         real_time_propagation(
-            self, potentials, adim_time_step, times, callbacks, leave_progress_bar,dissipation,gamma)
+            self, potentials, adim_time_step, times, callbacks, leave_progress_bar,dissipation,gamma,rotation = rotation, omega=omega)
 
     @property
     def density(self):
