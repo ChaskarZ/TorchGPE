@@ -47,7 +47,7 @@ def imaginary_time_propagation(gas, potentials, time_step, N_iterations, callbac
         callback.on_propagation_end()
 
 
-def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_progress_bar=True, dissipation=False, gamma = 0.028521, rotation = False, omega = 491.59): #>
+def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_progress_bar=True, dissipation=False, gamma = 0.028521): #>
     """Performs real time propagation of a wave function.
 
     Args:
@@ -60,8 +60,6 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
         >dissipation (bool, optional): Whether dissipation should also be considered
         >gamma (float, optional): What kind of dissipation coefficient should be used
     """
-    if (dissipation == False):        #>
-        gamma = 0                    #>
     
     # Divide the potentials in linear and nonlinear, time dependent and time independent to precompute the static linear ones
     static_linear_potentials = [potential for potential in potentials if issubclass(
@@ -83,23 +81,17 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
     kinetic_propagator = torch.exp(-(0.5j+gamma/2) * kinetic * time_step) #> including dissipation coefficient
     total_static_linear_potential = sum(potential.get_potential(*gas.coordinates) for potential in static_linear_potentials)
     
-    for momenta in gas.momenta:      #> #Just to see stuff
-        print(momenta)               #>
-        break                        #>
-    print(kinetic_propagator)        #> #Just to see stuff
     # Create a progress bar to monitor the evolution
     pbar = tqdm(times, smoothing=0, desc="Propagation",
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]', leave=leave_progress_bar)
 
-    if rotation == False:    #>
-        omega = 0            #>
     for epoch, t in enumerate(pbar):
         for callback in callbacks:
             callback.on_epoch_begin(epoch)
 
         # One step of the split-step Fourier method
         propagation_step(gas, total_static_linear_potential, dynamic_linear_potentials,
-                         static_nonlinear_potentials, dynamic_nonlinear_potentials, kinetic_propagator, time_step, t, gamma,omega = omega) #>
+                         static_nonlinear_potentials, dynamic_nonlinear_potentials, kinetic_propagator, time_step, t, gamma) #>
 
         for callback in callbacks:
             callback.on_epoch_end(epoch)
@@ -108,7 +100,7 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
         callback.on_propagation_end()
 
 
-def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, kinetic_propagator, time_step, time=None,gamma=0,omega = 0): #>
+def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, kinetic_propagator, time_step, time=None,gamma=0): #>
     """Performs one step of the split-step Fourier method.
 
     Args:
@@ -128,7 +120,7 @@ def propagation_step(gas, total_static_linear_potential, dynamic_linear_potentia
     
     gas.psik *= kinetic_propagator
     gas.psi *= potential_propagator(gas, time_step, total_static_linear_potential,
-                                    dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, time,gamma,omega = omega) #> 
+                                    dynamic_linear_potentials, static_nonlinear_potentials, dynamic_nonlinear_potentials, time,gamma) #> 
     gas.psik *= kinetic_propagator
     
     # print("After", torch.linalg.matrix_norm(gas.psi)) #>
@@ -148,15 +140,6 @@ def potential_propagator(gas, time_step, total_static_linear_potential, dynamic_
         time (float): The in-simulation time.
     """
 
-    arraymomenta = [] #>
-    arraycoords = []    #>
-    for momentum in gas.momenta: #>
-        arraymomenta.append(momentum) #>
-    for coords in gas.coordinates:    #>
-        arraycoords.appends(coords)    #>
-    rotpot = 0                            #>
-    for i in range(len(arraycoords)):    #>
-        rotpot += omega * np.linalg.norm(np.cross(arraymomenta[i],arraycoords[i])) #>
     
     
     
@@ -169,4 +152,4 @@ def potential_propagator(gas, time_step, total_static_linear_potential, dynamic_
         *gas.coordinates, gas.psi, time) for potential in dynamic_nonlinear_potentials)
 
     # Compute the propagator due to all the potentials
-    return torch.exp(-(1j+gamma) * (total_static_linear_potential + total_static_nonlinear_potential + total_dynamic_linear_potential + total_dynamic_nonlinear_potential + rotpot) * time_step) #>
+    return torch.exp(-(1j+gamma) * (total_static_linear_potential + total_static_nonlinear_potential + total_dynamic_linear_potential + total_dynamic_nonlinear_potential) * time_step) #>
