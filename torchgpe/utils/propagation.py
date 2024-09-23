@@ -47,7 +47,7 @@ def imaginary_time_propagation(gas, potentials, time_step, N_iterations, callbac
         callback.on_propagation_end()
 
 
-def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_progress_bar=True, dissipation=False, gamma = 0.028521, rotation = False. omega = 491.59): #>
+def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_progress_bar=True, dissipation=False, gamma = 0.028521, rotation = False, omega = 491.59): #>
     """Performs real time propagation of a wave function.
 
     Args:
