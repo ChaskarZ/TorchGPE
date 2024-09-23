@@ -91,7 +91,7 @@ def real_time_propagation(gas, potentials, time_step, times, callbacks, leave_pr
     pbar = tqdm(times, smoothing=0, desc="Propagation",
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]', leave=leave_progress_bar)
 
-    if rotation = False:    #>
+    if rotation == False:    #>
         omega = 0            #>
     for epoch, t in enumerate(pbar):
         for callback in callbacks:
